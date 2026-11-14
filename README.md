@@ -17,6 +17,7 @@ This repository holds the slide deck and its GitHub Pages site. The infographic 
 | `deck.json` | The slide order, sections and typefaces (Exo 2 and IBM Plex Sans, from Google Fonts). |
 | `slides/<id>.html` | One file per slide in the Slides artifact format: a single `<section>` with inline styles, the notes in a trailing `<aside>`. Asset references are relative paths into `assets/`. |
 | `assets/emblems/` | The repo emblems and the Data Crucible emblem, downscaled to 420 px. |
+| `assets/clips/*.vtt` | English captions for each demo excerpt, cut from the demos' own subtitle files; the viewer shows them by default. |
 | `assets/clips/` | 720p excerpts of the demo videos: the full pitch (1:40) and opening scene (0:37), and the first 40 seconds of each of the 16 tool demos, with a poster frame each. The full demos are in the `*-demo/video/` folders. |
 
 ## Slide order
