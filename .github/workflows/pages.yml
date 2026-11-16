@@ -25,8 +25,21 @@ jobs:
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
         with:
           enablement: true
+      # Publish an explicit allowlist only: the viewer (index.html), the assets it references, and .nojekyll.
+      # Notes, the submission text, the per-slide sources, exports, README and .github are never staged.
+      - name: Stage deck files for Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/assets
+          cp index.html .nojekyll _site/
+          cp -R assets/clips assets/emblems _site/assets/
+          if find _site -iname '*.md' | grep -q .; then echo '::error::Markdown found in _site'; exit 1; fi
+          find _site -type f | sort
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: .
+          path: _site
+          include-hidden-files: true
       - id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
