@@ -14,17 +14,32 @@ concurrency:
   cancel-in-progress: true
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, docker]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
         with:
           enablement: true
-      - uses: actions/upload-pages-artifact@v3
+      # Publish an explicit allowlist only: the viewer (index.html), the assets it references, and .nojekyll.
+      # Notes, the submission text, the per-slide sources, exports, README and .github are never staged.
+      - name: Stage deck files for Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/assets
+          cp index.html .nojekyll _site/
+          cp -R assets/clips assets/emblems _site/assets/
+          if find _site -iname '*.md' | grep -q .; then echo '::error::Markdown found in _site'; exit 1; fi
+          find _site -type f | sort
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: .
+          path: _site
+          include-hidden-files: true
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
